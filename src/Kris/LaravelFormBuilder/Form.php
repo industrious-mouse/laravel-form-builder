@@ -13,8 +13,10 @@ use Kris\LaravelFormBuilder\Events\AfterFormValidation;
 use Kris\LaravelFormBuilder\Events\BeforeFormValidation;
 use Kris\LaravelFormBuilder\Fields\FormField;
 use Kris\LaravelFormBuilder\Filters\FilterResolver;
+use Illuminate\Contracts\Support\Jsonable;
+use JsonSerializable;
 
-class Form
+class Form implements Jsonable, JsonSerializable
 {
     /**
      * All fields that are added.
@@ -958,6 +960,37 @@ class Form
             ->with('exclude', $this->exclude)
             ->with('form', $this)
             ->render();
+    }
+
+    /**
+     * Convert form to json.
+     *
+     * @return string
+     */
+    public function toJson($options = 0)
+    {
+        return json_encode($this);
+    }
+
+    /**
+     * Serialize form into json.
+     *
+     * @return mixed
+     */
+    public function jsonSerialize()
+    {
+        $data = [];
+        $this->setupNamedModel();
+
+        $data['formOptions'] = $this->formOptions;
+
+        // @todo: Model will need to implement \JsonSerializable
+        $data['model'] = $this->getModel();
+
+        // @todo: Each field needs to implement \JsonSerializable
+        $data['fields'] = $this->fields;
+
+        return $data;
     }
 
     /**
