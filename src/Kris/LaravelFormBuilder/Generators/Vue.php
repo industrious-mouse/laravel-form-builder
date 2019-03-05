@@ -3,6 +3,7 @@
 namespace Kris\LaravelFormBuilder\Generators;
 
 use Kris\LaravelFormBuilder\FormBuilder;
+use Kris\LaravelFormBuilder\Transformers;
 
 class Vue
 {
@@ -15,20 +16,20 @@ class Vue
 
     public function __construct()
     {
-        $this->transformer = resolve(Transfomers\Vue::class);
+        $this->transformer = resolve(Transformers\Vue::class);
         $this->builder = resolve(FormBuilder::class);
     }
 
-    public function setForm($class, $method)
+    public function setForm($class)
     {
-        $this->form = $this->builder->create($class, $method);
+        $this->form = $this->builder->create($class);
 
         return $this;
     }
 
     public function transform()
     {
-        $this->fields = $this->transformer->tranform($this->form);
+        $this->fields = $this->transformer->transform($this->form);
 
         return $this;
     }
