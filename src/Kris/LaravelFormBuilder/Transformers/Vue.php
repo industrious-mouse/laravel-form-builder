@@ -6,6 +6,6 @@ class Vue
 {
     public function transform(array $form)
     {
-        # code...
+        return [];
     }
 }

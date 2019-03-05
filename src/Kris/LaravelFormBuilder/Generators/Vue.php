@@ -6,11 +6,12 @@ use Kris\LaravelFormBuilder\FormBuilder;
 
 class Vue
 {
-    protected $form;
-    protected $model;
-    protected $options;
     protected $transformer;
     protected $builder;
+    protected $form;
+    protected $fields;
+    protected $model;
+    protected $options;
 
     public function __construct()
     {
