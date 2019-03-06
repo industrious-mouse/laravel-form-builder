@@ -18,13 +18,13 @@ class Vue
     protected $form;
 
     /** @var array  */
-    protected $fields;
+    protected $fields = [];
 
     /** @var array  */
-    protected $model;
+    protected $model = [];
 
     /** @var array  */
-    protected $options;
+    protected $options = [];
 
     /**
      * Vue constructor.
@@ -98,9 +98,11 @@ class Vue
     public function raw()
     {
         return [
-            'fields' => $this->fields,
-            'model' => $this->model,
-            'options' => $this->options
+            'schema' => [
+                'fields' => $this->fields
+            ],
+            'model' => (object) $this->model,
+            'options' => (object) $this->options
         ];
     }
 

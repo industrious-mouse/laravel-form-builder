@@ -25,7 +25,7 @@ class Vue
             $data[] = $this->map($field);
         }
 
-        return $data;
+        return array_filter($data);
     }
 
     /**
@@ -38,6 +38,11 @@ class Vue
      */
     protected function map(FormField $field)
     {
+        //Return if unsupported type
+        if(!$this->getType($field)) {
+            return null;
+        }
+
         return array_merge([
           'type' => $this->getType($field),
           'inputType' => $field->getType(),
@@ -57,25 +62,25 @@ class Vue
     {
         $instance = (new \ReflectionClass($field))->getShortName();
         switch ($instance) {
-          case 'InputType':
-            return 'input';
-            break;
+            case 'CheckableType':
+                return ($field->getType() === 'radio') ? 'radios' : 'checkbox';
+                break;
 
-          case 'SelectType':
-            return 'select';
-            break;
+            case 'SelectType':
+                return 'select';
+                break;
 
-          case 'CheckableType':
-            return $field->getType();
-            break;
+            case 'InputType':
+                return 'input';
+                break;
 
-          case 'ButtonType':
-            return 'button';
-            break;
+            case 'TextareaType':
+                return 'textArea';
+                break;
 
-          default:
-            return 'input';
-            break;
+            default:
+                return null;
+                break;
         }
     }
 
@@ -100,7 +105,7 @@ class Vue
         }
 
         if ($field->getOption('choices')) {
-            $data['value'] = $field->getOption('choices');
+            $data['values'] = $field->getOption('choices');
         }
 
         if($field->getOption('required')) {
