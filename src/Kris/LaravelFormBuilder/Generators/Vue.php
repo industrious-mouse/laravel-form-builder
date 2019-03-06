@@ -39,12 +39,15 @@ class Vue
      * Set Form Attribute
      *
      * @param $class
+     * @param $name
      *
      * @return $this
      */
-    public function setForm($class)
+    public function setForm($class, $name)
     {
-        $this->form = $this->builder->create($class);
+        $this->form = $this->builder->create(title_case($class), [], [
+            'name' => camel_case($name)
+        ]);
 
         return $this;
     }

@@ -60,7 +60,7 @@ class Vue
      */
     protected function getType(FormField $field)
     {
-        $instance = (new \ReflectionClass($field))->getShortName();
+        $instance = class_basename($field);
         switch ($instance) {
             case 'CheckableType':
                 return ($field->getType() === 'radio') ? 'radios' : 'checkbox';
