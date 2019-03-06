@@ -8,14 +8,13 @@ use Kris\LaravelFormBuilder\Filters\FilterResolver;
 use Kris\LaravelFormBuilder\Form;
 use Kris\LaravelFormBuilder\FormHelper;
 use Kris\LaravelFormBuilder\Rules;
-use \JsonSerializable;
 
 /**
  * Class FormField
  *
  * @package Kris\LaravelFormBuilder\Fields
  */
-abstract class FormField implements JsonSerializable
+abstract class FormField
 {
     /**
      * Name of the field.
@@ -210,34 +209,6 @@ abstract class FormField implements JsonSerializable
                 'translationTemplate' => $this->parent->getTranslationTemplate(),
             ]
         )->render();
-    }
-
-    /**
-     * Render the form in JSON.
-     *
-     * @return mixed
-     */
-    public function jsonSerialize()
-    {
-        $this->prepareOptions([]);
-
-        $value = $this->getValue();
-        $defaultValue = $this->getDefaultValue();
-
-        // Override default value with value
-        if (!$this->isValidValue($value) && $this->isValidValue($defaultValue)) {
-            $this->setOption($this->valueProperty, $defaultValue);
-        }
-
-        $data = $this->getRenderData();
-        $data = $data + [
-            'name' => $this->name,
-            'nameKey' => $this->getNameKey(),
-            'type' => $this->type,
-            'options' => $this->options,
-        ];
-
-        return $data;
     }
 
     /**
