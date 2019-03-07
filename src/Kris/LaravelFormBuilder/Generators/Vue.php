@@ -75,14 +75,14 @@ class Vue
      */
     public function setModel(array $options = [])
     {
-        if(isset($options['model'])){
-            $instance = $this->resolveModelInstance($options['model']);
+        if(!isset($options['model']) || !isset($options['id'])){
+            return $this;
         }
 
-        if(isset($options['id'])){
-            $model = $this->getModelInstance($instance, $options['id']);
-        }
+        $instance = $this->resolveModelInstance($options['model']);
+        $model = $this->getModelInstance($instance, $options['id']);
 
+        //TODO: Check if user has access to instance else return empty
         $this->model = $model->toArray();
 
         return $this;
