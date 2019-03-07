@@ -83,7 +83,7 @@ class Vue
         $model = $this->getModelInstance($instance, $options['id']);
 
         //TODO: Check if user has access to instance else return empty
-        $this->model = $model->toArray();
+        $this->model = $model;
 
         return $this;
     }
@@ -102,6 +102,12 @@ class Vue
         return $this;
     }
 
+    protected function invoke()
+    {
+        $this->mergeOptions();
+        $this->trimModelInstance();
+    }
+
     /**
      * Get raw values
      *
@@ -109,12 +115,14 @@ class Vue
      */
     public function raw()
     {
+        $this->invoke();
+
         return [
             'schema' => [
                 'fields' => $this->fields
             ],
             'model' => (object) $this->model,
-            'options' => (object) array_merge($this->options, $this->form->getFormOptions())
+            'options' => (object) $this->options
         ];
     }
 
@@ -126,6 +134,31 @@ class Vue
     public function toJson()
     {
         return json_encode($this->raw());
+    }
+
+    /**
+     * Merge form-generator and user passed options
+     *
+     * @return $this
+     */
+    protected function mergeOptions()
+    {
+        $this->options = array_merge($this->options, $this->form->getFormOptions());
+
+        return $this;
+    }
+
+    /**
+     * Trim to only return model values required
+     *
+     * @return $this
+     */
+    protected function trimModelInstance()
+    {
+        $fields = array_keys($this->form->getFields());
+        $this->model = collect($this->model)->only($fields);
+
+        return $this;
     }
 
     /**
