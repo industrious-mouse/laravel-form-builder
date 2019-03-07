@@ -2,6 +2,7 @@
 
 namespace Kris\LaravelFormBuilder\Generators;
 
+use Illuminate\Database\Eloquent\Model;
 use Kris\LaravelFormBuilder\Form;
 use Kris\LaravelFormBuilder\FormBuilder;
 use Kris\LaravelFormBuilder\Transformers;
@@ -18,13 +19,13 @@ class Vue
     protected $form;
 
     /** @var array  */
-    protected $fields = [];
+    protected $fields;
 
     /** @var array  */
-    protected $model = [];
+    protected $model;
 
     /** @var array  */
-    protected $options = [];
+    protected $options;
 
     /**
      * Vue constructor.
@@ -68,13 +69,21 @@ class Vue
     /**
      * Set Model Attribute
      *
-     * @param array $model
+     * @param array $options
      *
      * @return $this
      */
-    public function setModel(array $model = [])
+    public function setModel(array $options = [])
     {
-        $this->model = $model;
+        if(isset($options['model'])){
+            $instance = $this->resolveModelInstance($options['model']);
+        }
+
+        if(isset($options['id'])){
+            $model = $this->getModelInstance($instance, $options['id']);
+        }
+
+        $this->model = $model->toArray();
 
         return $this;
     }
@@ -105,7 +114,7 @@ class Vue
                 'fields' => $this->fields
             ],
             'model' => (object) $this->model,
-            'options' => (object) $this->options
+            'options' => (object) array_merge($this->options, $this->form->getFormOptions())
         ];
     }
 
@@ -117,5 +126,34 @@ class Vue
     public function toJson()
     {
         return json_encode($this->raw());
+    }
+
+    /**
+     * Returns an instance of model
+     *
+     * @param $model
+     *
+     * @return \Illuminate\Database\Eloquent\Model
+     */
+    protected function resolveModelInstance($model)
+    {
+        $class = config('laravel-form-builder.default_model_namespace', 'App') . '\\' . title_case($model);
+
+        if (!class_exists($class)) {
+            throw new \InvalidArgumentException('Model class with name ' . $class . ' does not exist.');
+        }
+
+        return resolve($class);
+    }
+
+    /**
+     * @param \Illuminate\Database\Eloquent\Model $instance
+     * @param $id
+     *
+     * @return \Illuminate\Database\Eloquent\Model
+     */
+    protected function getModelInstance(Model $instance, $id)
+    {
+        return $instance->findOrFail($id);
     }
 }
