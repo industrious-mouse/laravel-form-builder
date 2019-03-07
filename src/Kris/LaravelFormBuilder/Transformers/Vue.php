@@ -108,6 +108,18 @@ class Vue
             $data['values'] = $field->getOption('choices');
         }
 
+        if ($field->getOption('attributes')) {
+            $data['attributes'] = $field->getOption('attributes');
+        }
+
+        if ($field->getOption('multiple')) {
+            $data['multi'] = $field->getOption('multiple');
+        }
+
+        if ($field->getOption('styleClasses')) {
+            $data['styleClasses'] = $field->getOption('styleClasses');
+        }
+
         if($field->getOption('required')) {
             $data['required'] = $field->getOption('required');
         }

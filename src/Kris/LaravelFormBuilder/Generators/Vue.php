@@ -133,7 +133,7 @@ class Vue
      */
     public function toJson()
     {
-        return json_encode($this->raw());
+        return json_encode($this->raw(), JSON_HEX_QUOT|JSON_HEX_TAG);
     }
 
     /**
