@@ -24,6 +24,8 @@ class Vue
     /** @var array  */
     protected $model;
 
+    protected $class;
+
     /** @var array  */
     protected $options = [
         'validateAsync' => true,
@@ -50,6 +52,8 @@ class Vue
      */
     public function setForm($class, $name)
     {
+        $this->class = $class;
+
         $this->form = $this->builder->create(title_case($class), [], [
             'name' => camel_case($name)
         ]);
@@ -79,11 +83,11 @@ class Vue
      */
     public function setModel(array $options = [])
     {
-        if(!isset($options['model']) || !isset($options['id'])){
+        if(!isset($options['id'])){
             return $this;
         }
 
-        $instance = $this->resolveModelInstance($options['model']);
+        $instance = $this->resolveModelInstance();
         $model = $this->getModelInstance($instance, $options['id']);
 
         //TODO: Check if user has access to instance else return empty
@@ -172,15 +176,11 @@ class Vue
      *
      * @return \Illuminate\Database\Eloquent\Model
      */
-    protected function resolveModelInstance($model)
+    protected function resolveModelInstance()
     {
-        $class = config('laravel-form-builder.default_model_namespace', 'App') . '\\' . title_case($model);
+        $model = $this->form::MODEL;
 
-        if (!class_exists($class)) {
-            throw new \InvalidArgumentException('Model class with name ' . $class . ' does not exist.');
-        }
-
-        return resolve($class);
+        return resolve($model);
     }
 
     /**
