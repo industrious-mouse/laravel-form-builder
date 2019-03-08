@@ -44,9 +44,10 @@ class Vue
         }
 
         return array_merge([
-          'type' => $this->getType($field),
-          'inputType' => $field->getType(),
-          'label' => $field->getOption('label'),
+            'type' => $this->getType($field),
+            'inputType' => $field->getType(),
+            'label' => $field->getOption('label'),
+            'validator' => 'validateInput'
         ], $this->additionalMapping($field));
     }
 
@@ -67,7 +68,7 @@ class Vue
                 break;
 
             case 'SelectType':
-                return 'select';
+                return $field->getOption('multiple') ? 'vueMultiSelect' : 'select';
                 break;
 
             case 'InputType':
@@ -105,7 +106,16 @@ class Vue
         }
 
         if ($field->getOption('choices')) {
-            $data['values'] = $field->getOption('choices');
+            $values = collect($field->getOption('choices'))
+                ->map(function($item, $key) {
+                    return [
+                        'id' => $key,
+                        'name' => $item
+                    ];
+                })
+                ->values();
+
+            $data['values'] = $values;
         }
 
         if ($field->getOption('attributes')) {
@@ -113,7 +123,15 @@ class Vue
         }
 
         if ($field->getOption('multiple')) {
-            $data['multi'] = $field->getOption('multiple');
+            $data['selectOptions'] = [
+                'multiple' => $field->getOption('multiple'),
+                'trackBy' => 'id',
+                'label' => 'name',
+            ];
+        }
+
+        if($field->getOption('noneSelectedText')) {
+            $data['noneSelectedText'] = $field->getOption('noneSelectedText');
         }
 
         if ($field->getOption('styleClasses')) {

@@ -25,7 +25,11 @@ class Vue
     protected $model;
 
     /** @var array  */
-    protected $options;
+    protected $options = [
+        'validateAsync' => true,
+        'validateAfterLoad' => true,
+        'validateAfterChanged' => true
+    ];
 
     /**
      * Vue constructor.
@@ -97,7 +101,7 @@ class Vue
      */
     public function setOptions(array $options = [])
     {
-        $this->options = $options;
+        $this->options = array_merge($this->options, $options);
 
         return $this;
     }
@@ -156,7 +160,7 @@ class Vue
     protected function trimModelInstance()
     {
         $fields = array_keys($this->form->getFields());
-        $this->model = collect($this->model)->only($fields);
+        $this->model = collect($this->model->getAttributes())->only($fields);
 
         return $this;
     }
