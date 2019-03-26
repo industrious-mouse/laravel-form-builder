@@ -24,6 +24,10 @@ class Vue
     /** @var array  */
     protected $model;
 
+    /** @var array  */
+    protected $defaultValues;
+
+    /** @var  */
     protected $class;
 
     /** @var array  */
@@ -70,6 +74,7 @@ class Vue
     public function transform()
     {
         $this->fields = $this->transformer->transform($this->form);
+        $this->defaultValues = $this->transformer->extractValues($this->form);
 
         return $this;
     }
@@ -163,14 +168,16 @@ class Vue
      */
     protected function trimModelInstance()
     {
-        if(!$this->model) {
-            $this->model = [];
-
-            return $this;
-        }
-        
         $fields = array_keys($this->form->getFields());
-        $this->model = collect($this->model->getAttributes())->only($fields);
+        if(! $this->model) {
+            $model = [];
+        } else {
+            $model = collect($this->model->getAttributes())
+                ->only($fields)
+                ->toArray();
+        }
+
+        $this->model = array_merge($this->defaultValues, $model);
 
         return $this;
     }
