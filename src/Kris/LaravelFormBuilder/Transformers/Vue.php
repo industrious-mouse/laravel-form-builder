@@ -28,6 +28,24 @@ class Vue
         return array_filter($data);
     }
 
+    public function extractValues(Form $form)
+    {
+        $data = [];
+
+        foreach ($form->getFields() as $field) {
+            if($this->getValue($field)){
+                $data[$field->getRealName()] = $this->getValue($field);
+            }
+        }
+
+        return array_filter($data);
+    }
+
+    protected function getValue(FormField $field)
+    {
+        return $field->getOption('value');
+    }
+
     /**
      * Map Field into correct format
      *
