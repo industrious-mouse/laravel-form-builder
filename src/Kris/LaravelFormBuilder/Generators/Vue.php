@@ -163,6 +163,12 @@ class Vue
      */
     protected function trimModelInstance()
     {
+        if(!$this->model) {
+            $this->model = [];
+
+            return $this;
+        }
+        
         $fields = array_keys($this->form->getFields());
         $this->model = collect($this->model->getAttributes())->only($fields);
 
