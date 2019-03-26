@@ -126,6 +126,10 @@ class Vue
         if ($field->getOption('choices')) {
             $values = collect($field->getOption('choices'))
                 ->map(function($item, $key) {
+                    if(is_array($item)){
+                        return $item;
+                    }
+                    
                     return [
                         'id' => $key,
                         'name' => $item
