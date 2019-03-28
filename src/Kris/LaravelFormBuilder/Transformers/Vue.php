@@ -82,25 +82,61 @@ class Vue
         $instance = class_basename($field);
         switch ($instance) {
             case 'CheckableType':
-                return ($field->getType() === 'radio') ? 'radios' : 'checkbox';
+                return $this->handleCheckableTypes($field);
                 break;
 
             case 'SelectType':
-                return $field->getOption('multiple') ? 'vueMultiSelect' : 'select';
+                return $this->handleSelectTypes($field);
                 break;
 
             case 'InputType':
-                return $field->getType() === 'file' ? 'file-upload' : 'input';
+                return $this->handleInputTypes($field);
                 break;
 
             case 'TextareaType':
                 return 'textArea';
                 break;
 
+            case 'StaticType':
+                return 'text';
+                break;
+
             default:
                 return null;
                 break;
         }
+    }
+
+    protected function handleCheckableTypes($field)
+    {
+        if($field->getType() === 'radio') {
+            return 'radios';
+        }
+
+        return 'checkbox';
+    }
+
+    protected function handleSelectTypes($field)
+    {
+        if($field->getOption('multiple')) {
+            return 'vueMultiSelect';
+        }
+
+        return 'select';
+    }
+
+    protected function handleInputTypes($field)
+    {
+        //TODO: Need to change this and use own custom flatpicker
+        if($field->getType() === 'date') {
+            return 'dateTimePicker';
+        }
+
+        if($field->getType() === 'file') {
+            return 'file-upload';
+        }
+
+        return 'input';
     }
 
     /**
@@ -129,7 +165,7 @@ class Vue
                     if(is_array($item)){
                         return $item;
                     }
-                    
+
                     return [
                         'id' => $key,
                         'name' => $item
@@ -180,8 +216,16 @@ class Vue
             $data['max'] = $field->getOption('max');
         }
 
+        if($field->getOption('rows')) {
+            $data['rows'] = $field->getOption('rows');
+        }
+
         if($field->getOption('disabled')) {
             $data['disabled'] = $field->getOption('disabled');
+        }
+
+        if($field->getOption('dateTimePickerOptions')) {
+            $data['dateTimePickerOptions'] = $field->getOption('dateTimePickerOptions');
         }
 
         return $data;
