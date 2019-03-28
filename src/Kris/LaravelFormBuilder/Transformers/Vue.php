@@ -90,7 +90,7 @@ class Vue
                 break;
 
             case 'InputType':
-                return 'input';
+                return $field->getType() === 'file' ? 'file-upload' : 'input';
                 break;
 
             case 'TextareaType':
