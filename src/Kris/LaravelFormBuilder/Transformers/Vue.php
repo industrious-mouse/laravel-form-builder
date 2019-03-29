@@ -127,9 +127,8 @@ class Vue
 
     protected function handleInputTypes($field)
     {
-        //TODO: Need to change this and use own custom flatpicker
         if($field->getType() === 'date') {
-            return 'dateTimePicker';
+            return 'date-picker';
         }
 
         if($field->getType() === 'file') {
@@ -224,8 +223,8 @@ class Vue
             $data['disabled'] = $field->getOption('disabled');
         }
 
-        if($field->getOption('dateTimePickerOptions')) {
-            $data['dateTimePickerOptions'] = $field->getOption('dateTimePickerOptions');
+        if($field->getOption('options')) {
+            $data['options'] = $field->getOption('options');
         }
 
         return $data;
